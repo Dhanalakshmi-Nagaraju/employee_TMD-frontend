@@ -2,9 +2,9 @@
 
 Next.js 15 frontend for the Employee Task Management Dashboard.
 
-## Part 1 (current) — Config + API foundation
+## Part 2 (current) — Login flow
 
-This commit includes project setup and shared types/client only. No auth, pages, or feature APIs yet.
+Mock auth with `localStorage`. No password — email only, matching the backend.
 
 ### Prerequisites
 
@@ -22,20 +22,25 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+### Test logins
+
+| Role | Email |
+|------|-------|
+| Manager | `manager@test.com` |
+| Employee | Any email in the `employees` table (e.g. from `data.sql`) |
+
 ### What's included
 
 | Area | Files |
 |------|-------|
-| Config | `package.json`, `next.config.ts`, `tsconfig.json`, `tailwind.config.ts`, `postcss.config.mjs`, `components.json`, `.env.example` |
-| App shell | `src/app/layout.tsx`, `providers.tsx`, `globals.css`, placeholder `page.tsx` |
-| Utilities | `src/lib/utils.ts` (`cn` helper for shadcn) |
-| API layer | `src/api/client.ts`, `src/types/api.types.ts` |
-| Domain types | `src/types/employee.types.ts`, `src/types/task.types.ts` |
+| Part 1 | Config, `api/client.ts`, employee/task types |
+| Auth types | `src/types/auth.types.ts` |
+| Auth API | `src/api/auth.api.ts` |
+| Auth state | `src/context/AuthContext.tsx`, `src/hooks/useAuth.ts` |
+| Login UI | `src/app/auth/login/page.tsx`, shadcn card/button/input/label |
+| Routing | `src/app/page.tsx` redirects by role |
+| Placeholders | `manager/dashboard`, `employee/dashboard` (logout only) |
 
-### API proxy
+### Next (Part 3)
 
-Frontend calls `/api/...` on the same origin. Next.js rewrites those to Spring Boot (`NEXT_PUBLIC_API_URL`).
-
-### Next (Part 2)
-
-Login flow: `auth.types.ts`, `AuthContext`, login page, `auth.api.ts`.
+`AuthGuard`, `AppShell`, sidebar/topbar, protected layouts.
