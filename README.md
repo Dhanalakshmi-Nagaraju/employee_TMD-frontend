@@ -2,9 +2,9 @@
 
 Next.js 15 frontend for the Employee Task Management Dashboard.
 
-## Part 3 (current) — Layout + route protection
+## Part 4 (current) — Manager dashboard
 
-Protected manager and employee areas with sidebar, topbar, and role-based guards.
+Live stats and chart from `GET /api/dashboard/stats`.
 
 ### Prerequisites
 
@@ -20,32 +20,29 @@ cp .env.example .env   # Windows: copy .env.example .env
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000), sign in as `manager@test.com`.
 
-### Test logins
+### Expected dashboard data (seeded backend)
 
-| Role | Email |
-|------|-------|
-| Manager | `manager@test.com` |
-| Employee | Any email in the `employees` table (e.g. from `data.sql`) |
+| Metric | Example value |
+|--------|---------------|
+| Total Employees | 3 |
+| Total Tasks | 4 |
+| Pending Tasks | 2 |
+| Completed Tasks | 1 |
+| Status chart | PENDING: 2, IN_PROGRESS: 1, COMPLETED: 1 |
 
 ### What's included
 
 | Area | Files |
 |------|-------|
-| Part 1–2 | Config, API client, login, auth context |
-| Route guard | `src/components/auth/AuthGuard.tsx` |
-| Layout | `AppShell`, `Sidebar`, `Topbar` |
-| Layouts | `src/app/manager/layout.tsx`, `src/app/employee/layout.tsx` |
-| Navigation | `src/lib/navigation.ts` |
-| Pages | Dashboard, Employees, Tasks, My Tasks (placeholders) |
+| Part 1–3 | Config, auth, layout, guards |
+| Types | `src/types/dashboard.types.ts` |
+| API | `src/api/dashboard.api.ts` |
+| Hook | `src/hooks/useDashboard.ts` |
+| UI | `StatsCards`, `StatusChart`, `DashboardSkeleton` |
+| Page | `src/app/manager/dashboard/page.tsx` |
 
-### Route protection
+### Next (Part 5)
 
-- Not logged in → `/auth/login`
-- Employee opens `/manager/*` → redirected to employee dashboard
-- Manager opens `/employee/*` → redirected to manager dashboard
-
-### Next (Part 4)
-
-Manager dashboard stats + chart from `GET /api/dashboard/stats`.
+Employee CRUD table at `/manager/employees`.
