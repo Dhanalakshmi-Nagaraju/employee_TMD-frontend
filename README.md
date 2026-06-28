@@ -2,9 +2,9 @@
 
 Next.js 15 frontend for the Employee Task Management Dashboard.
 
-## Part 2 (current) — Login flow
+## Part 3 (current) — Layout + route protection
 
-Mock auth with `localStorage`. No password — email only, matching the backend.
+Protected manager and employee areas with sidebar, topbar, and role-based guards.
 
 ### Prerequisites
 
@@ -33,14 +33,19 @@ Open [http://localhost:3000](http://localhost:3000).
 
 | Area | Files |
 |------|-------|
-| Part 1 | Config, `api/client.ts`, employee/task types |
-| Auth types | `src/types/auth.types.ts` |
-| Auth API | `src/api/auth.api.ts` |
-| Auth state | `src/context/AuthContext.tsx`, `src/hooks/useAuth.ts` |
-| Login UI | `src/app/auth/login/page.tsx`, shadcn card/button/input/label |
-| Routing | `src/app/page.tsx` redirects by role |
-| Placeholders | `manager/dashboard`, `employee/dashboard` (logout only) |
+| Part 1–2 | Config, API client, login, auth context |
+| Route guard | `src/components/auth/AuthGuard.tsx` |
+| Layout | `AppShell`, `Sidebar`, `Topbar` |
+| Layouts | `src/app/manager/layout.tsx`, `src/app/employee/layout.tsx` |
+| Navigation | `src/lib/navigation.ts` |
+| Pages | Dashboard, Employees, Tasks, My Tasks (placeholders) |
 
-### Next (Part 3)
+### Route protection
 
-`AuthGuard`, `AppShell`, sidebar/topbar, protected layouts.
+- Not logged in → `/auth/login`
+- Employee opens `/manager/*` → redirected to employee dashboard
+- Manager opens `/employee/*` → redirected to manager dashboard
+
+### Next (Part 4)
+
+Manager dashboard stats + chart from `GET /api/dashboard/stats`.
