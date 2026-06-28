@@ -1,75 +1,68 @@
 "use client";
 
-import { useDeleteEmployee, useUpdateEmployee, useEmployees, useCreateEmployee } from "@/hooks/useEmployees";
+import { useState } from "react";
+import { EmployeeTable } from "@/components/features/employees/EmployeeTable";
+import { EmptyState } from "@/components/shared/EmptyState";
+import { TableSkeleton } from "@/components/shared/TableSkeleton";
+import { useEmployees } from "@/hooks/useEmployees";
+
 export default function EmployeesPage() {
-  const {data, isLoading, isError, error } = useEmployees({
-    page: 0,
+  const [page, setPage] = useState(0);
+
+  const { data, isLoading, isError, error } = useEmployees({
+    page,
     size: 10,
   });
 
-const createMutation = useCreateEmployee();
-
-const handleTestCreate = async() => {
-  try{
-    await createMutation.mutateAsync({
-      name:"Test User",
-      email:`test${Date.now()}@example.com`,
-      department:"IT",
-    });
-    alert("Created");
-  } catch(e) {
-    alert(e instanceof Error ? e.message : "Failed");
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-semibold">Employees</h1>
+          <p className="text-muted-foreground">
+            Manage team members who can be assigned tasks.
+          </p>
+        </div>
+        <TableSkeleton />
+      </div>
+    );
   }
-}
 
-const updateMutation = useUpdateEmployee();
-
-const handleTestUpdate = async() =>{
-  try{
-    await updateMutation.mutateAsync({
-      id : 15,
-      payload: {
-        name: "Kiara",
-        email: "Kiara@gmail.com",
-        department: "QA",
-      },
-    });
-    alert("updated");
-  }catch(e) {
-    alert (e instanceof Error ? e.message : "Failed");
+  if (isError) {
+    return (
+      <div className="space-y-2">
+        <h1 className="text-2xl font-semibold">Employees</h1>
+        <p className="text-destructive">{error.message}</p>
+      </div>
+    );
   }
-};
 
-
-const deleteMutation = useDeleteEmployee();
-
-const handleTestDelete = async() =>{
-  try{
-    await deleteMutation.mutateAsync(16);
-    alert("deleted");
-  }catch(e) {
-    alert(e instanceof Error ? e.message : "Failed");
+  if (!data) {
+    return null;
   }
-};
-
-
-if(isLoading) return  <p>Loading...</p>
-if(isError) return <p>{error.message}</p>;
 
   return (
-    <div>
-      <button onClick = {handleTestCreate} disabled ={createMutation.isPending}>
-        {createMutation.isPending ? "Creating....":"Test create employee"}
-      </button>
-      <button onClick = {handleTestUpdate} disabled ={updateMutation.isPending}>
-        Test update employee
-      </button>
-      <button onClick={handleTestDelete} disabled={deleteMutation.isPending}>
-        {deleteMutation.isPending ? "Deleting....": "Test delete employee"}
-      </button>
-    <pre>{JSON.stringify(data?.content,null,2)}</pre>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-semibold">Employees</h1>
+        <p className="text-muted-foreground">
+          Manage team members who can be assigned tasks.
+        </p>
+      </div>
+
+      {data.empty ? (
+        <EmptyState
+          title="No employees found"
+          description="Get started by adding your first employee."
+        />
+      ) : (
+        <EmployeeTable
+          employees={data.content}
+          page={data.number}
+          totalPages={data.totalPages}
+          onPageChange={setPage}
+        />
+      )}
     </div>
   );
 }
-
-
