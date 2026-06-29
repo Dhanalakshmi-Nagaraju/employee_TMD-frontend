@@ -1,5 +1,7 @@
+"use client";
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { createTask, deleteTask, fetchTaskById,fetchTasks, TaskListParams, updateTask, updateTaskStatus } from "@/api/tasks.api";
+import { createTask, deleteTask, fetchTaskById,fetchTasks, TaskListParams, updateTask, updateTaskStatus, fetchMyTasks, MyTasksListParams } from "@/api/tasks.api";
 import { TaskRequest, TaskStatus } from "@/types/task.types";
 
 
@@ -66,8 +68,21 @@ export function useUpdateTask() {
         updateTaskStatus(id, { status }),
       onSuccess: (_data, variables) => {
         queryClient.invalidateQueries({ queryKey: ["tasks"] });
+        queryClient.invalidateQueries({ queryKey: ["my-tasks"] });
         queryClient.invalidateQueries({ queryKey: ["task", variables.id] });
         queryClient.invalidateQueries({ queryKey: ["dashboard", "stats"] });
+        queryClient.invalidateQueries({ queryKey: ["dashboard", "employee-stats"] });
       },
+    });
+  }
+
+  export function useMyTasks(
+    employeeId: number | null,
+    params: MyTasksListParams
+  ) {
+    return useQuery({
+      queryKey: ["my-tasks", employeeId, params],
+      queryFn: () => fetchMyTasks(employeeId!, params),
+      enabled: employeeId != null,
     });
   }
