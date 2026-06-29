@@ -14,12 +14,14 @@ export function DashboardSkeleton() {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {Array.from({ length: 4 }).map((_, index) => (
           <Card key={index}>
-            <CardContent className="space-y-2">
-              <div className="flex items-center gap-2">
-                <SkeletonBlock className="size-4" />
-                <SkeletonBlock className="h-4 w-24" />
+            <CardContent className="py-6">
+              <div className="flex items-start justify-between gap-4">
+                <div className="space-y-2">
+                  <SkeletonBlock className="h-3 w-24" />
+                  <SkeletonBlock className="h-10 w-16" />
+                </div>
+                <SkeletonBlock className="size-11 rounded-xl" />
               </div>
-              <SkeletonBlock className="h-8 w-16" />
             </CardContent>
           </Card>
         ))}
