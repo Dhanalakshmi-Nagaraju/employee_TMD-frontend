@@ -1,52 +1,59 @@
 "use client";
 
-import {useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { EmployeeTable } from "@/components/features/employees/EmployeeTable";
+import { DeleteEmployeeDialog } from "@/components/features/employees/DeleteEmployeeDialog";
+import { EmployeeFormModal } from "@/components/features/employees/EmployeeFormModal";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { TableSkeleton } from "@/components/shared/TableSkeleton";
 import { useEmployees } from "@/hooks/useEmployees";
-import { Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { EmployeeFormModal } from "@/components/features/employees/EmployeeFormModal";
+import { Input } from "@/components/ui/input";
+import { Plus, Search } from "lucide-react";
 import type { Employee } from "@/types/employee.types";
-
-
 
 export default function EmployeesPage() {
   const [page, setPage] = useState(0);
-
   const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] =useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
+  const [deletingEmployee, setDeletingEmployee] = useState<Employee | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
       setPage(0);
     }, 300);
-    return () =>clearTimeout(timer);
-    }, [search]);
+    return () => clearTimeout(timer);
+  }, [search]);
 
+  const openCreateModal = () => {
+    setEditingEmployee(null);
+    setModalOpen(true);
+  };
 
-    const [modalOpen, setModalOpen] = useState(false);
-    const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
+  const openEditModal = (employee: Employee) => {
+    setEditingEmployee(employee);
+    setModalOpen(true);
+  };
 
-    const openCreateModal = () => {
-      setEditingEmployee(null);
-      setModalOpen(true);
-    };
-
-    const openEditModal = (employee: Employee) => {
-      setEditingEmployee(employee);
-      setModalOpen(true);
-    };
+  const openDeleteDialog = (employee: Employee) => {
+    setDeletingEmployee(employee);
+  };
 
   const { data, isLoading, isError, error } = useEmployees({
     page,
     size: 10,
-    search: debouncedSearch
+    search: debouncedSearch,
   });
+
+  const handleEmployeeDeleted = () => {
+    if (data && data.content.length === 1 && page > 0) {
+      setPage(page - 1);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -91,12 +98,12 @@ export default function EmployeesPage() {
       </div>
 
       <div className="relative max-w-md">
-          <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            className="pl-9"
-            placeholder="Search by name, email"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+        <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          className="pl-9"
+          placeholder="Search by name, email"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
@@ -116,6 +123,7 @@ export default function EmployeesPage() {
           totalPages={data.totalPages}
           onPageChange={setPage}
           onEdit={openEditModal}
+          onDelete={openDeleteDialog}
         />
       )}
 
@@ -123,6 +131,15 @@ export default function EmployeesPage() {
         open={modalOpen}
         onOpenChange={setModalOpen}
         employee={editingEmployee}
+      />
+
+      <DeleteEmployeeDialog
+        open={Boolean(deletingEmployee)}
+        onOpenChange={(open) => {
+          if (!open) setDeletingEmployee(null);
+        }}
+        employee={deletingEmployee}
+        onDeleted={handleEmployeeDeleted}
       />
     </div>
   );

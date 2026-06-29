@@ -7,6 +7,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import type { Employee } from "@/types/employee.types";
 
 interface EmployeeTableProps {
@@ -15,6 +22,7 @@ interface EmployeeTableProps {
   totalPages: number;
   onPageChange: (page: number) => void;
   onEdit: (employee: Employee) => void;
+  onDelete: (employee: Employee) => void;
 }
 
 function formatDate(iso: string) {
@@ -31,6 +39,7 @@ export function EmployeeTable({
   totalPages,
   onPageChange,
   onEdit,
+  onDelete,
 }: EmployeeTableProps) {
   return (
     <>
@@ -42,7 +51,7 @@ export function EmployeeTable({
               <TableHead>Email</TableHead>
               <TableHead>Department</TableHead>
               <TableHead>Created</TableHead>
-              <TableHead className="w-20 text-right">Actions</TableHead>
+              <TableHead className="w-16 text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -53,12 +62,27 @@ export function EmployeeTable({
                 <TableCell>{employee.department}</TableCell>
                 <TableCell>{formatDate(employee.createdAt)}</TableCell>
                 <TableCell className="text-right">
-                {onEdit && (
-                  <Button variant="outline" size="sm" onClick={() => onEdit(employee)}>
-                    Edit
-                  </Button>
-                )}
-              </TableCell>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon-sm" aria-label="Open actions">
+                        <MoreHorizontal className="size-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => onEdit(employee)}>
+                        <Pencil className="size-4" />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        variant="destructive"
+                        onClick={() => onDelete(employee)}
+                      >
+                        <Trash2 className="size-4" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
