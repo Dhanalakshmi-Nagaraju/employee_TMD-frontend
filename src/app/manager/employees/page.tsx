@@ -1,17 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import {useEffect, useState } from "react";
 import { EmployeeTable } from "@/components/features/employees/EmployeeTable";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { TableSkeleton } from "@/components/shared/TableSkeleton";
 import { useEmployees } from "@/hooks/useEmployees";
+import { Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+
 
 export default function EmployeesPage() {
   const [page, setPage] = useState(0);
 
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] =useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+      setPage(0);
+    }, 300);
+    return () =>clearTimeout(timer);
+    }, [search]);
+
   const { data, isLoading, isError, error } = useEmployees({
     page,
     size: 10,
+    search: debouncedSearch
   });
 
   if (isLoading) {
@@ -50,10 +65,24 @@ export default function EmployeesPage() {
         </p>
       </div>
 
+      <div className="relative max-w-md">
+          <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            className="pl-9"
+            placeholder="Search by name or email"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
+
       {data.empty ? (
         <EmptyState
           title="No employees found"
-          description="Get started by adding your first employee."
+          description={
+            debouncedSearch
+              ? "Try a different search term."
+              : "Get started by adding your first employee."
+          }
         />
       ) : (
         <EmployeeTable
