@@ -1,4 +1,4 @@
-import {deleteEmployee, updateEmployee,createEmployee, fetchEmployees, type EmployeeListParams } from "@/api/employees.api";
+import {deleteEmployee, updateEmployee,createEmployee, fetchEmployees,fetchEmployeeOptions, type EmployeeListParams } from "@/api/employees.api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {EmployeeRequest} from "@/types/employee.types";
 
@@ -46,3 +46,11 @@ export function useDeleteEmployee() {
         },
     });
 }
+
+export function useEmployeeOptions() {
+    return useQuery({
+      queryKey: ["employees", "options"],
+      queryFn: fetchEmployeeOptions,
+      staleTime: 5 * 60 * 1000, // cache 5 min — dropdown data changes rarely
+    });
+  }

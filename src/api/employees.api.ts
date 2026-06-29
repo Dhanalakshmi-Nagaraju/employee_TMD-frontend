@@ -1,6 +1,6 @@
 import { apiClient, unwrapData } from "./client";
 import { Page } from "@/types/api.types";
-import { Employee, EmployeeRequest } from "@/types/employee.types";
+import { Employee, EmployeeRequest, EmployeeOption } from "@/types/employee.types";
 
 export interface EmployeeListParams {
   search?: string;
@@ -42,4 +42,9 @@ export async function updateEmployee(
 export async function deleteEmployee(id: number): Promise<void> {
   const response = await apiClient.delete(`/api/employees/${id}`);
   return unwrapData<void>(response);
+}
+
+export async function fetchEmployeeOptions(): Promise<EmployeeOption[]> {
+  const response = await apiClient.get("/api/employees/options");
+  return unwrapData<EmployeeOption[]>(response);
 }
