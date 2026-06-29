@@ -14,6 +14,7 @@ interface EmployeeTableProps {
   page: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  onEdit: (employee: Employee) => void;
 }
 
 function formatDate(iso: string) {
@@ -29,6 +30,7 @@ export function EmployeeTable({
   page,
   totalPages,
   onPageChange,
+  onEdit,
 }: EmployeeTableProps) {
   return (
     <>
@@ -40,6 +42,7 @@ export function EmployeeTable({
               <TableHead>Email</TableHead>
               <TableHead>Department</TableHead>
               <TableHead>Created</TableHead>
+              <TableHead className="w-20 text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -49,6 +52,13 @@ export function EmployeeTable({
                 <TableCell>{employee.email}</TableCell>
                 <TableCell>{employee.department}</TableCell>
                 <TableCell>{formatDate(employee.createdAt)}</TableCell>
+                <TableCell className="text-right">
+                {onEdit && (
+                  <Button variant="outline" size="sm" onClick={() => onEdit(employee)}>
+                    Edit
+                  </Button>
+                )}
+              </TableCell>
               </TableRow>
             ))}
           </TableBody>

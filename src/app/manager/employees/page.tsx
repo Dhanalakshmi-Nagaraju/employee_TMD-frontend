@@ -7,6 +7,11 @@ import { TableSkeleton } from "@/components/shared/TableSkeleton";
 import { useEmployees } from "@/hooks/useEmployees";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { EmployeeFormModal } from "@/components/features/employees/EmployeeFormModal";
+import type { Employee } from "@/types/employee.types";
+
 
 
 export default function EmployeesPage() {
@@ -22,6 +27,20 @@ export default function EmployeesPage() {
     }, 300);
     return () =>clearTimeout(timer);
     }, [search]);
+
+
+    const [modalOpen, setModalOpen] = useState(false);
+    const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
+
+    const openCreateModal = () => {
+      setEditingEmployee(null);
+      setModalOpen(true);
+    };
+
+    const openEditModal = (employee: Employee) => {
+      setEditingEmployee(employee);
+      setModalOpen(true);
+    };
 
   const { data, isLoading, isError, error } = useEmployees({
     page,
@@ -58,18 +77,24 @@ export default function EmployeesPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Employees</h1>
-        <p className="text-muted-foreground">
-          Manage team members who can be assigned tasks.
-        </p>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold">Employees</h1>
+          <p className="text-muted-foreground">
+            Manage team members who can be assigned tasks.
+          </p>
+        </div>
+        <Button onClick={openCreateModal}>
+          <Plus className="size-4" />
+          Add Employee
+        </Button>
       </div>
 
       <div className="relative max-w-md">
           <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             className="pl-9"
-            placeholder="Search by name or email"
+            placeholder="Search by name, email"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
         />
@@ -90,8 +115,15 @@ export default function EmployeesPage() {
           page={data.number}
           totalPages={data.totalPages}
           onPageChange={setPage}
+          onEdit={openEditModal}
         />
       )}
+
+      <EmployeeFormModal
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        employee={editingEmployee}
+      />
     </div>
   );
 }
