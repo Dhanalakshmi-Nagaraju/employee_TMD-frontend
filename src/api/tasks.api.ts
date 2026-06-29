@@ -60,3 +60,27 @@ export async function fetchTasks(
         const response = await apiClient.patch(`/api/tasks/${id}/status`, payload);
         return unwrapData<Task>(response);
       }
+
+
+
+      export interface MyTasksListParams {
+        page?: number;
+        size?: number;
+        search?: string;
+        status?: TaskStatus;
+        priority?: Priority;
+      }
+      
+      export async function fetchMyTasks(
+        employeeId: number,
+        params: MyTasksListParams = {}
+      ): Promise<Page<Task>> {
+        return fetchTasks({
+          page: params.page,
+          size: params.size,
+          search: params.search,
+          status: params.status,
+          priority: params.priority,
+          assignedEmployeeId: employeeId,
+        });
+      }
