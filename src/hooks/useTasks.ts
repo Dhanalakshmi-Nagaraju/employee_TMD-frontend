@@ -3,12 +3,14 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createTask, deleteTask, fetchTaskById,fetchTasks, TaskListParams, updateTask, updateTaskStatus, fetchMyTasks, MyTasksListParams } from "@/api/tasks.api";
 import { TaskRequest, TaskStatus } from "@/types/task.types";
+import { keepPreviousData } from "@tanstack/react-query";
 
 
 export function useTasks(params: TaskListParams) {
     return useQuery({
         queryKey: ["tasks",params],
         queryFn: () => fetchTasks(params),
+        placeholderData: keepPreviousData,
     });
 }
 
@@ -83,6 +85,7 @@ export function useUpdateTask() {
     return useQuery({
       queryKey: ["my-tasks", employeeId, params],
       queryFn: () => fetchMyTasks(employeeId!, params),
+      placeholderData: keepPreviousData,
       enabled: employeeId != null,
     });
   }

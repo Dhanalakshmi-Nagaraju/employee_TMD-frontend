@@ -1,11 +1,13 @@
 import {deleteEmployee, updateEmployee,createEmployee, fetchEmployees,fetchEmployeeOptions, type EmployeeListParams } from "@/api/employees.api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {EmployeeRequest} from "@/types/employee.types";
+import { keepPreviousData } from "@tanstack/react-query";
 
 export function useEmployees(params:EmployeeListParams) {
     return useQuery({
         queryKey : ["employees", params],
         queryFn: () => fetchEmployees(params),
+        placeholderData: keepPreviousData,
     });
 }
 
